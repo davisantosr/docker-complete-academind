@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  mongodb:
+    image: 'mongo'
+    volumes:
+      - data:/data/db
+    # environment: 
+      # MONGO_INITDB_ROOT_USERNAME: davi
+      # MONGO_INITDB_ROOT_PASSWORD: pass
+      # - MONGO_INITDB_ROOT_USERNAME=davi       =>> also a correct sintax
+
+    env_file: 
+      - ./env/mongo.env
+
+    # networks: 
+    #   - goals-net   ==>> Optional. In the docker compose it already set a network for the services. 
+    
+  backend:
+    build: ./backend
+    # build: 
+      # context: './backend' #'context' need to have all context that image refers
+      # dockerfile: Dockerfile-dev #sample when use another name for Dockerfile
+      # args:
+          # some-arg: 1
+    # image: 'node-app' => Can use a image already built and tells docker which
+
+    ports: 
+      - '80:80'
+    
+    volumes:
+       - logs:/app/logs
+       - .backend:/app
+       - /app/node_modules
+    env_file:
+      - ./env/backend.env
+
+    depends_on: 
+      - mongodb
+
+  # frontend:
+
+volumes: 
+  data:          # A new volumes need to be specified when it have a named volumes
+  logs:
+  
